@@ -1,7 +1,8 @@
 # Inherited Udacity Jira integration, retained for reference.
 # Runs only when explicitly started from GitHub's Actions tab.
 name: Manual Workflow
-
+permissions:
+  contents: read
 on:
   workflow_dispatch:
 
