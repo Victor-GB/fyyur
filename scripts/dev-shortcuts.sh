@@ -44,6 +44,13 @@ _latest_python_file() {
         sed -n '1s/^[^ ]* //p'
 }
 
+_latest_markdown_file() {
+    find "$PWD" -maxdepth 1 -type f -name '*.md' -printf '%T@ %p\n' |
+        sort -nr |
+        sed -n '1s/^[^ ]* //p'
+}
+
+
 frmal() (
     set -o pipefail
     mkdir -p "$PY_PROJECT_ROOT/tmp" || return
@@ -73,6 +80,24 @@ frm() (
     "$project_python" -m ruff check --fix --exit-zero "$target" || return
     "$project_python" -m ruff format "$target" || return
     "$project_python" -m ruff check "$target"
+)
+
+frmmd() (
+    local target
+    target="${1:-$(_latest_markdown_file)}"
+
+    if [[ -z "$target" ]]; then
+        printf 'No Markdown files in the current directory.\n'
+        return 1
+    fi
+
+    printf 'Selected: %s\n' "${target#"$PY_PROJECT_ROOT"/}"
+    "$PY_PROJECT_ROOT/.venv/bin/rumdl" check --fix -- "$target"
+)
+
+frmmda() (
+    cd "$PY_PROJECT_ROOT" || return
+    "$PY_PROJECT_ROOT/.venv/bin/rumdl" check --fix --respect-gitignore .
 )
 
 frmpy() (
@@ -158,6 +183,8 @@ frma    Fix and format Python files recursively under PY_PROJECT_ROOT.
 frmal   Same as frma, saving output to tmp/frma.log.
 frmpya  Same as frma, then run mypy across the project.
 frmpyal Same as frmpya, saving output to tmp/frmpya.log.
+frmmd   Fix the newest Markdown file, or a supplied file: frmmd README.md
+frmmda  Fix Markdown files across the project, respecting Git exclusions.
 pt      Run pytest on the newest Python file in the current directory.
 pta     Run the complete project test suite.
 ptl     Same as pt, saving output to tmp/pytest-latest.log.

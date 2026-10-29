@@ -6,6 +6,9 @@ project_root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
 cd -- "$project_root"
 project_python="$project_root/.venv/bin/python"
 
+printf '\n==> Markdown checks\n'
+"$project_root/.venv/bin/rumdl" check --respect-gitignore .
+
 printf '\n==> Ruff formatting\n'
 "$project_python" -m ruff format --check .
 

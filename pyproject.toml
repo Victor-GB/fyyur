@@ -50,3 +50,12 @@ omit=[
 [tool.coverage.report]
 show_missing = true
 skip_covered = true
+
+[tool.rumdl]
+respect-gitignore = true
+
+[tool.rumdl.MD013]
+line-length = 88
+reflow = true
+code-blocks = false
+tables = false
